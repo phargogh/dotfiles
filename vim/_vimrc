@@ -1,0 +1,128 @@
+" An example for a vimrc file.
+"
+" Maintainer:	Bram Moolenaar <Bram@vim.org>
+" Last change:	2017 Sep 20
+"
+" To use it, copy it to
+"     for Unix and OS/2:  ~/.vimrc
+"	      for Amiga:  s:.vimrc
+"  for MS-DOS and Win32:  $VIM\_vimrc
+"	    for OpenVMS:  sys$login:.vimrc
+
+"call plug#begin('~/vimfiles/autoload')
+"Plug 'pangloss/vim-javascript'
+"call plug#env()
+
+
+" When started as "evim", evim.vim will already have done these settings.
+if v:progname =~? "evim"
+  finish
+endif
+
+" Get the defaults that most users want.
+source $VIMRUNTIME/defaults.vim
+
+if has("vms")
+  set nobackup		" do not keep a backup file, use versions instead
+else
+  set backup		" keep a backup file (restore to previous version)
+  if has('persistent_undo')
+    set undofile	" keep an undo file (undo changes after closing)
+  endif
+endif
+
+if &t_Co > 2 || has("gui_running")
+  " Switch on highlighting the last used search pattern.
+  set hlsearch
+endif
+
+if has("gui_running")
+  if has("gui_win32")
+    set guifont=Consolas:h11:cANSI
+  endif
+endif
+
+" Only do this part when compiled with support for autocommands.
+if has("autocmd")
+
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+  au!
+
+  " For all text files set 'textwidth' to 78 characters.
+  autocmd FileType text setlocal textwidth=78
+
+  augroup END
+
+else
+
+  set autoindent		" always set autoindenting on
+
+endif " has("autocmd")
+
+" Add optional packages.
+"
+" The matchit plugin makes the % command work better, but it is not backwards
+" compatible.
+" The ! means the package won't be loaded right away but when plugins are
+" loaded during initialization.
+if has('syntax') && has('eval')
+  packadd! matchit
+endif
+
+" James' Configuration options.
+set nu
+
+autocmd BufWritePre * %s/\s\+$//e  " Remove trailing whitespace.
+
+" ts - tabstop
+" sts - softtabstop: make the spaces feel like real tabs
+" sw - shiftwidth
+autocmd Filetype javascript set ts=4 sw=4 sts=4
+autocmd Filetype python set ts=4 sw=4 sts=4 textwidth=79
+autocmd Filetype yaml set ts=4 sw=4 sts=4
+autocmd Filetype dockerfile set ts=4 sw=4 sts=4
+autocmd Filetype make set ts=4 sw=4 sts=4
+set expandtab  " always expand tabs.
+
+set smarttab
+set cindent
+
+" Make tab characters easier to see
+set list
+set listchars=tab:>-
+
+" Enable spelling
+set spell spelllang=en_us
+
+" Vim-Plug
+" (including automatic installation)
+" This path is used on Windows.  On Linux (vim8), the path should be
+" ~/.vim/autoload/plug.vim
+if has('win32')
+    if empty(glob('~\vimfiles\autoload\plug.vim'))
+        silent !curl -fLo ~/vimfiles/autoload/plug.vim --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+else
+    if empty(glob('~/.vim/autoload/plug.vim'))
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+            \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
+endif
+
+call plug#begin('~\vimfiles\plugged')
+Plug 'dense-analysis/ale'
+Plug 'vim-scripts/indentpython.vim'
+call plug#end()
+
+
+" Python-specific (and related languages) configuration
+set encoding=utf-8
+au BufNewFile *.py,*.pyx,*.c,*.h set filetype=unix
+"au BufNewFile,BufRead *.py,*.pyx,*.c,*.h match BadWhitespace /\s\+$/
+
+
+
