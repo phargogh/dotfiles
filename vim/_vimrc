@@ -95,6 +95,20 @@ set listchars=tab:>-
 " Enable spelling
 set spell spelllang=en_us
 
+" Set up the clipboard to make sure I can yank to somewhere.
+if has('win32')
+    set clipboard=unnamed
+else
+    if system('uname -s') == "Darwin\n"
+      set clipboard=unnamed "OSX
+    else
+      set clipboard=unnamedplus "Linux
+    endif
+endif
+
+" Backspace fix.  See https://vi.stackexchange.com/a/2163/27535
+set backspace=indent,eol,start
+
 " Vim-Plug
 " (including automatic installation)
 " This path is used on Windows.  On Linux (vim8), the path should be
