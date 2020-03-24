@@ -100,9 +100,9 @@ if has('win32')
     set clipboard=unnamed
 else
     if system('uname -s') == "Darwin\n"
-      set clipboard=unnamed "OSX
+        set clipboard=unnamed "OSX
     else
-      set clipboard=unnamedplus "Linux
+        set clipboard=unnamedplus "Linux
     endif
 endif
 
@@ -119,24 +119,39 @@ if has('win32')
             \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
+    let VIM_PLUGGED_DIR = "~\vimfiles\plugged"
 else
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
             \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
+    let VIM_PLUGGED_DIR = "~/vimfiles/plugged"
 endif
 
-call plug#begin('~\vimfiles\plugged')
+call plug#begin(VIM_PLUGGED_DIR)
 Plug 'dense-analysis/ale'
 Plug 'vim-scripts/indentpython.vim'
+Plug 'vim-python/python-syntax'
+Plug 'lifepillar/vim-solarized8'
+Plug 'freeo/vim-kalisi'
 call plug#end()
+
+" Colorscheme options
+" enable 256-color mode
+set t_Co=256
+"colorscheme solarized8
+colorscheme kalisi
+let g:solarized_use16 = 1
 
 
 " Python-specific (and related languages) configuration
 set encoding=utf-8
-au BufNewFile *.py,*.pyx,*.c,*.h set filetype=unix
+au BufNewFile *.py,*.pyx,*.pxd,*.c,*.h set filetype=unix
+au BufNewFile,BufRead  *.py set filetype=python
+au FileType python set omnifunc=pythoncomplete#Complete
+au FileType python syn keyword pythonDecorator True None False self
 "au BufNewFile,BufRead *.py,*.pyx,*.c,*.h match BadWhitespace /\s\+$/
 
-
-
+" Options for vim-python/python-syntax
+let g:python_highlight_all = 1
