@@ -1,0 +1,14 @@
+# See https://gist.github.com/subfuzion/db7f57fff2fb6998a16c
+# for more information on setting up a global gitignore.
+*~
+.DS_Store
+
+# Vim stuff
+*.swp
+
+# python stuff
+__pycache__
+.eggs
+.pytest_cache
+*.egg-info
+
