@@ -19,7 +19,7 @@ for ymlfile in $(git diff --name-only --cached | egrep '.*\.ya?ml$')
 do
         echo "Checking $ymlfile"
         # Found this at https://stackoverflow.com/a/20420243/299084
-        ruby -ryaml -e "p YAML.load(STDIN.read)" < $ymlfile
+        ruby -ryaml -e "YAML.load(STDIN.read)" < $ymlfile
 done
 
 if [[ $ERRORS_PRESENT -gt 0 ]]
