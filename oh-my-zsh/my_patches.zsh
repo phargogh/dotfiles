@@ -6,7 +6,7 @@
 function git_prompt_info() {
   local ref
   if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
-    github_repo=$(command git remote get-url origin 2>/dev/null | egrep -o '[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+.git$' | sed 's|.git$||g')
+    github_repo=$(command git remote get-url origin 2>/dev/null | egrep -o '[a-zA-Z0-9_-]+/[a-zA-Z0-9_.-]+.git$' | sed 's|.git$||g')
     ref=$(command git describe --exact-match --tags 2> /dev/null) || \
     ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
     ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
