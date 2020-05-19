@@ -1,0 +1,4 @@
+flake8-rst-docstrings  # for RST docstring linting
+virtualenv
+pip
+wheel

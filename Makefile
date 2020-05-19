@@ -2,6 +2,10 @@
 
 CURRENT_DIR=$(shell pwd)
 
+mac-packages:
+	brew install vim fzf
+	$(brew --prefix)/opt/fzf/install
+
 zsh:
 	sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 	cp oh-my-zsh/.zshrc ~/.zshrc
