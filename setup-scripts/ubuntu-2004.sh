@@ -6,8 +6,6 @@ mkdir -p workspace/phargogh
 sudo apt update
 sudo apt install -y git vim curl vim-youcompleteme
 
-git clone git@github.com:phargogh/dotfiles
-
 # install plug.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
