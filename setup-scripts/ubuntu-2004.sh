@@ -27,5 +27,5 @@ sudo apt install -y build-essential
 # If we need to be able to commit and push to github, create a new ssh key.
 ssh-keygen -t rsa -b 4096
 
-echo "\n\nCopy this into github:\n\n"
+echo -e "\n\nCopy this into github:\n\n"
 cat ~/.ssh/id_rsa.pub
