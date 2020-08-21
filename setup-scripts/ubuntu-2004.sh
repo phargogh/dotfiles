@@ -19,7 +19,7 @@ vim +PlugInstall +qall!
 # If we're doing python development, install needed packages for linters.
 sudo apt install -y python3 python3-pyflakes
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-bash Miniconda3-latest-Linux-x86-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 
 # If we're doing C development, install appropriate compilers and libraries
 sudo apt install -y build-essential
