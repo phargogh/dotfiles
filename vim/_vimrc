@@ -184,13 +184,18 @@ set statusline+=\ %f
 set statusline+=%=
 set statusline+=\ %{LinterStatus()}
 
+" Default to unix file endings, except for batfiles, which shoul be dos.
+au BufNewFile * set fileformat=unix
+au BufNewFile *.bat set fileformat=dos
+
 
 " Python-specific (and related languages) configuration
 set encoding=utf-8
-au BufNewFile *.py,*.pyx,*.pxd,*.c,*.h set filetype=unix
+au BufNewFile *.py,*.pyx,*.pxd,*.c,*.h set fileformat=unix
 au BufNewFile,BufRead  *.py set filetype=python
 au FileType python set omnifunc=pythoncomplete#Complete
 au FileType python syn keyword pythonDecorator True None False self
+au FileType python syn match keyword "\v<[A-Z0-9_]+>"
 "au BufNewFile,BufRead *.py,*.pyx,*.c,*.h match BadWhitespace /\s\+$/
 
 " Options for vim-python/python-syntax
