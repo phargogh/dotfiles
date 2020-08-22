@@ -84,6 +84,8 @@ autocmd Filetype javascript set ts=4 sw=4 sts=4
 autocmd Filetype make set ts=4 sw=4 sts=4
 autocmd Filetype python set ts=4 sw=4 sts=4 textwidth=79
 autocmd Filetype yaml set ts=4 sw=4 sts=4
+autocmd Filetype arduino set ts=4 sw=4 sts=4
+
 set expandtab  " always expand tabs.
 
 set smarttab
@@ -120,7 +122,7 @@ if has('win32')
             \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
         autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
     endif
-    let VIM_PLUGGED_DIR = "~\vimfiles\plugged"
+    let VIM_PLUGGED_DIR = "~\\vimfiles\\plugged"
 else
     if empty(glob('~/.vim/autoload/plug.vim'))
         silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -137,33 +139,31 @@ Plug 'vim-python/python-syntax'
 Plug 'lifepillar/vim-solarized8'
 Plug 'freeo/vim-kalisi'
 Plug 'tpope/vim-commentary'
+Plug 'mhinz/vim-signify'
+Plug 'vim-syntastic/syntastic'
+Plug 'sudar/vim-arduino-syntax'
 call plug#end()
 
 " Colorscheme options
 " enable 256-color mode
 set t_Co=256
 "colorscheme solarized8
-try
-    colorscheme kalisi
-catch
-    colorscheme elflord
-endtry
-
+colorscheme kalisi
 let g:solarized_use16 = 1
 set cursorline
 
 " ALE options
 let g:ale_linters = {
-    \   'python': ['flake8', 'pylint', 'pycodestyle', 'pydocstyle'],
+    \   'python': ['flake8'],
     \   'javascript': ['eslint'],
     \}
 let g:ale_fixers = {
     \   'python': ['autopep8',
-    \              'isort',
     \              'remove_trailing_lines',
     \              'trim_whitespace']
     \}
 let g:ale_fix_on_save = 1
+let g:ale_lint_on_save = 1
 
 function! LinterStatus() abort
   let l:counts = ale#statusline#Count(bufnr(''))
@@ -204,3 +204,8 @@ let g:python_highlight_all = 1
 :  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
 :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 :augroup END
+
+" Folding!
+"
+" Display characters in the gutter when folds are open or closed.
+set foldcolumn=1
