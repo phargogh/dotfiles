@@ -56,7 +56,7 @@ if has("autocmd")
 
 else
 
-  set autoindent		" always set autoindenting on
+  set autoindent        " always set autoindenting on
 
 endif " has("autocmd")
 
@@ -80,10 +80,14 @@ autocmd BufWritePre * %s/\s\+$//e  " Remove trailing whitespace.
 " sw - shiftwidth
 autocmd FileType c set ts=4 sw=4 sts=4
 autocmd Filetype dockerfile set ts=4 sw=4 sts=4
-autocmd Filetype javascript set ts=4 sw=4 sts=4
+autocmd Filetype javascript set ts=2 sw=2 sts=2
+autocmd Filetype javascriptreact set ts=2 sw=2 sts=2
 autocmd Filetype make set ts=4 sw=4 sts=4
 autocmd Filetype python set ts=4 sw=4 sts=4 textwidth=79
 autocmd Filetype yaml set ts=4 sw=4 sts=4
+autocmd Filetype plaintex set ts=4 sw=4 sts=4
+autocmd Filetype tex set ts=4 sw=4 sts=4
+autocmd Filetype sh set ts=4 sw=4 sts=4
 set expandtab  " always expand tabs.
 
 set smarttab
@@ -95,6 +99,11 @@ set listchars=tab:>-
 
 " Enable spelling
 set spell spelllang=en_us
+
+" Spelunker configuration
+let g:spelunker_check_type = 2  " check spelling for only the words that are visible.
+let g:spelunker_white_list_for_user = ['phargogh', 'pygeoprocessing', 'taskgraph', 'numpy', 'nodata']
+
 
 " Set up the clipboard to make sure I can yank to somewhere.
 if has('win32')
@@ -132,11 +141,18 @@ endif
 
 call plug#begin(VIM_PLUGGED_DIR)
 Plug 'dense-analysis/ale'
-Plug 'vim-scripts/indentpython.vim'
 Plug 'vim-python/python-syntax'
 Plug 'lifepillar/vim-solarized8'
 Plug 'freeo/vim-kalisi'
 Plug 'tpope/vim-commentary'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+Plug 'ap/vim-css-color'
+Plug 'yuezk/vim-js'
+Plug 'maxmellon/vim-jsx-pretty'
+"Plug 'kamykn/spelunker.vim'
+Plug 'davidhalter/jedi-vim'
+Plug 'ternjs/tern_for_vim', {'do': 'npm install'}
 call plug#end()
 
 " Colorscheme options
@@ -144,21 +160,30 @@ call plug#end()
 set t_Co=256
 "colorscheme solarized8
 colorscheme kalisi
+set background=dark
 let g:solarized_use16 = 1
 set cursorline
 
+" python-linter options
+let g:python_highlight_all = 1
+
 " ALE options
+" NOTE: the python linters will only work if they're available.
+" So, run vim from within an activated python environment with these things
+" installed.
 let g:ale_linters = {
-    \   'python': ['flake8', 'pylint', 'pycodestyle', 'pydocstyle'],
+    \   'python': ['flake8', 'pycodestyle', 'pydocstyle'],
     \   'javascript': ['eslint'],
     \}
+let g:ale_python_pydocstyle_options = '--convention=google'
 let g:ale_fixers = {
-    \   'python': ['autopep8',
-    \              'isort',
-    \              'remove_trailing_lines',
-    \              'trim_whitespace']
+    \   'python': [],
     \}
 let g:ale_fix_on_save = 1
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_virtualenv_dir_names = ['env37-conda', 'env36-conda', 'env']
 
 function! LinterStatus() abort
   let l:counts = ale#statusline#Count(bufnr(''))
@@ -166,17 +191,37 @@ function! LinterStatus() abort
   let l:all_errors = l:counts.error + l:counts.style_error
   let l:all_non_errors = l:counts.total - l:all_errors
 
-  return l:counts.total == 0 ? '✨ all good ✨' : printf(
+  return l:counts.total == 0 ? '👾' : printf(
         \   '😞 %dW %dE',
         \   all_non_errors,
         \   all_errors
         \)
 endfunction
 
+set laststatus=2  " always display the status line.
+"set statusline=
+"set statusline+=%m
+"set statusline+=\ %f
+"set statusline+=%=
+"set statusline+=\ %{LinterStatus()}
+function! StatuslineGit()
+  let l:branchname = system("git rev-parse --abbrev-ref HEAD 2>/dev/null | tr -d '\n'")
+  return strlen(l:branchname) > 0?'  '.l:branchname.' ':''
+endfunction
+
 set statusline=
-set statusline+=%m
+set statusline+=%#PmenuSel#
+"set statusline+=%{StatuslineGit()}
+set statusline+=%#LineNr#
 set statusline+=\ %f
+set statusline+=%m
 set statusline+=%=
+set statusline+=%#CursorColumn#
+set statusline+=\ %y
+set statusline+=\ %{&fileencoding?&fileencoding:&encoding}
+set statusline+=\ [%{&fileformat}\]
+set statusline+=\ %p%%
+set statusline+=\ %l:%c
 set statusline+=\ %{LinterStatus()}
 
 
@@ -184,12 +229,23 @@ set statusline+=\ %{LinterStatus()}
 set encoding=utf-8
 au BufNewFile *.py,*.pyx,*.pxd,*.c,*.h set filetype=unix
 au BufNewFile,BufRead  *.py set filetype=python
-au FileType python set omnifunc=pythoncomplete#Complete
+"au FileType python set omnifunc=pythoncomplete#Complete
 au FileType python syn keyword pythonDecorator True None False self
 "au BufNewFile,BufRead *.py,*.pyx,*.c,*.h match BadWhitespace /\s\+$/
 
+" Lower the timeout for python syntax searching for matching paren pairs.
+" This is normally set to 250, but this threshold was causing vim to take
+" several seconds to open a new line on a large python file.
+" See suggestion at https://github.com/vim/vim/issues/1098#issuecomment-484197849
+let g:pyindent_searchpair_timeout=10
+
 " Options for vim-python/python-syntax
-let g:python_highlight_all = 1
+"let g:python_highlight_all = 1
+
+" Node.js configuration
+filetype plugin on
+set omnifunc=syntaxcomplete#Complete
+
 
 " Toggle between absolute and relative line numbering.
 :set number relativenumber
@@ -199,3 +255,7 @@ let g:python_highlight_all = 1
 :  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
 :  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
 :augroup END
+
+" Look for a tags file in CWD, then in each parent repo until one is found.
+" https://stackoverflow.com/a/19331411/299084
+set tags=./tags;,tags;
