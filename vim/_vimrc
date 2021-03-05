@@ -180,7 +180,7 @@ let g:ale_linters = {
     \   'javascript': ['eslint'],
     \}
 let g:ale_fixers = {
-    \   'python': ['autopep8',
+    \   'python': [
     \              'remove_trailing_lines',
     \              'trim_whitespace']
     \}
@@ -188,10 +188,16 @@ let g:ale_fix_on_save = 1
 let g:ale_echo_msg_error_str = 'E'
 let g:ale_echo_msg_warning_str = 'W'
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-let g:ale_virtualenv_dir_names = ['env37-conda', 'env36-conda', 'env']
+let g:ale_virtualenv_dir_names = ['env38-conda', 'env37-conda', 'env36-conda', 'env']
 let g:ale_python_pydocstyle_options = '--convention=google'
 let g:ale_fix_on_save = 1
 let g:ale_lint_on_save = 1
+
+if has('win32')
+    let g:ale_python_flake8_executable = 'C:\Users\James\miniconda3-x64\envs\env38-flake8\Scripts\flake8.exe'
+else
+    let g:ale_python_flake8_executable = 'flake8'
+endif
 
 function! LinterStatus() abort
   let l:counts = ale#statusline#Count(bufnr(''))
